@@ -1,38 +1,51 @@
-.App {
-  text-align: center;
+.vjs-select-video .vjs-icon-placeholder:before {
+  content: "";
+  background-image: url('data:image/svg+xml,<svg stroke="currentColor" fill="white" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M21 3H3c-1.11 0-2 .89-2 2v12a2 2 0 002 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5a2 2 0 00-2-2zm0 14H3V5h18v12zm-5-6l-7 4V7z"></path></svg>');
+  background-repeat: no-repeat;
+  /* background-size: 46px; */
+  background-position: 55% calc(50% - 0px);
+  border: none !important;
+  box-shadow: none !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.vjs-select-subtitle .vjs-icon-placeholder:before {
+  content: "";
+  background-image: url('data:image/svg+xml,<svg stroke="currentColor" fill="white" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h8v2H6zm10 0h2v2h-2zm-6-4h8v2h-8z"></path></svg>');
+  background-repeat: no-repeat;
+  /* background-size: 46px; */
+  background-position: 55% calc(50% - 0px);
+  border: none !important;
+  box-shadow: none !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.vjs-f11-full-screen-toggle .vjs-icon-placeholder:before {
+  content: "";
+  background-image: url('data:image/svg+xml,<svg stroke="currentColor" fill="white" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M5 5h5V3H3v7h2zm5 14H5v-5H3v7h7zm11-5h-2v5h-5v2h7zm-2-4h2V3h-7v2h5z"></path></svg>');
+  background-repeat: no-repeat;
+  /* background-size: 46px; */
+  background-position: 55% calc(50% - 0px);
+  border: none !important;
+  box-shadow: none !important;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.video-js .vjs-control-bar {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.video-js .vjs-current-time {
+  display: block;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.video-js .vjs-time-divider {
+  display: block;
+  padding: 0;
+  min-width: 0;
+}
+
+.video-js .vjs-duration {
+  display: block;
+}
+
+body {
+  background-color: black;
 }
