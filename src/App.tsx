@@ -1,7 +1,11 @@
-import LocalVideoPlayer from "./localVideo/localVideoPlayer";
+import LocalVideoPlayer from './localVideo/localVideoPlayer';
 
 function App() {
-  return <LocalVideoPlayer></LocalVideoPlayer>;
+    return (
+        <div>
+            <LocalVideoPlayer></LocalVideoPlayer>
+        </div>
+    );
 }
 
 export default App;
