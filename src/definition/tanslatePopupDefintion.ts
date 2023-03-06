@@ -1,8 +1,9 @@
+import { Subtitle } from '../subtitle/subtitleContainer';
 import { Video } from './watchVideoDefinition';
 
 class PopupProps {
     public video!: Video;
-    public getContextFromVideo!: () => ContextFromVideo | null;
+    public subtitle!: Subtitle;
 }
 
 class PopupAttrs {

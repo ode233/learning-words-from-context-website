@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import { useState } from 'react';
@@ -21,7 +23,7 @@ import {
     ListItemIcon,
     ListItemText
 } from '@mui/material';
-import { dataUrlToBlob, getPhoneticApi } from '../api/translateApi';
+import { dataUrlToBlob } from '../api/translateApi';
 import {
     DICT_POPUP_WIDTH,
     DICT_POPUP_HEIGHT,
@@ -30,10 +32,10 @@ import {
     ANKI_POPUP_HEIGHT,
     ANKI_POPUP_WIDTH
 } from '../constants/translateConstants';
-import { delay } from '../utils/delayUtils';
-import { PopupAttrs, PopupProps } from '../definition/tanslatePopupDefintion';
+import { ContextFromVideo, PopupAttrs, PopupProps } from '../definition/tanslatePopupDefintion';
 import { translator } from '../option/option';
 import { addNote } from '../api/ankiApi';
+import { SUBTITLE_WRAPPER_ID } from '../constants/watchVideoConstants';
 
 const DictPopupWrapper = styled.div``;
 
@@ -46,7 +48,7 @@ const Text = styled.h3`
     margin: 18px 0px;
 `;
 
-const Popup = ({ video, getContextFromVideo }: PopupProps) => {
+const Popup = ({ video, subtitle }: PopupProps) => {
     const [popupAttrs, setPopupAttrs] = useState(new PopupAttrs());
 
     const popupAttrsRef = useRef(popupAttrs);
@@ -128,6 +130,18 @@ const Popup = ({ video, getContextFromVideo }: PopupProps) => {
             }
         });
     }, []);
+
+    function getContextFromVideo(): ContextFromVideo | null {
+        let nowSubtitleNode = subtitle.getNowSubtitleNode();
+        if (!nowSubtitleNode) {
+            return null;
+        }
+        let subtitleWrapper = document.getElementById(SUBTITLE_WRAPPER_ID);
+        subtitleWrapper!.style.display = 'none';
+        let videoContext = video.getContextFromVideo(nowSubtitleNode.begin, nowSubtitleNode.end);
+        subtitleWrapper!.style.display = 'block';
+        return videoContext;
+    }
 
     const onClickOpenAnkiPopup = async () => {
         window.getSelection()?.removeAllRanges();

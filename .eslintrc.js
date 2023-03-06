@@ -80,7 +80,8 @@ module.exports = {
                     'srt',
                     'autoplay',
                     'offscreen',
-                    'msg'
+                    'msg',
+                    'no-cors'
                 ]
             }
         ]

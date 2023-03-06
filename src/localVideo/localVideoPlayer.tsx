@@ -12,6 +12,8 @@ import { Subtitle, SubtitleContainer } from '../subtitle/subtitleContainer';
 import { LocalVideo } from './video';
 import { requestPermission, getDeckNames, createDeck, getModelNames, createModel } from '../api/ankiApi';
 import { ANKI_DECK_NAME, ANKI_MODEL_NAME } from '../constants/ankiConstants';
+import { createRoot } from 'react-dom/client';
+import { Popup } from '../translate/popup';
 
 const localVideoPlayerId = 'local-video-player';
 const videoInputId = 'video-input';
@@ -93,6 +95,7 @@ checkAnkiConfig();
 function LocalVideoPlayer() {
     const videoNode = useRef<HTMLVideoElement>(null);
     const subtitleRenderContainer = useRef<HTMLDivElement>(null);
+    const popupRenderContainer = useRef<HTMLDivElement>(null);
     const player = useRef<videojs.Player>();
 
     console.log('LocalVideoPlayer');
@@ -156,10 +159,11 @@ function LocalVideoPlayer() {
         let subtitle = new Subtitle(subtitleNodeList);
         let localVideo = new LocalVideo(videoNode.current!, player.current);
         let mountElement = document.getElementById(localVideoPlayerId);
-        ReactDOM.render(
-            <SubtitleContainer video={localVideo} subtitle={subtitle} mountElement={mountElement!}></SubtitleContainer>,
-            subtitleRenderContainer.current
+
+        createRoot(subtitleRenderContainer.current!).render(
+            <SubtitleContainer video={localVideo} subtitle={subtitle} mountElement={mountElement!}></SubtitleContainer>
         );
+        createRoot(popupRenderContainer.current!).render(<Popup video={localVideo} subtitle={subtitle}></Popup>);
     }
 
     return (
@@ -196,6 +200,7 @@ function LocalVideoPlayer() {
                 onChange={subtitleInputOnChange}
             />
             <div ref={subtitleRenderContainer}></div>
+            <div ref={popupRenderContainer}></div>
         </div>
     );
 }

@@ -137,8 +137,6 @@ class Subtitle {
 
 function SubtitleContainer({ video, subtitle, mountElement }: SubtitleContainerProps) {
     const subtitleWrapperRef = useRef<HTMLDivElement>(null);
-    const subtitleRef = useRef<Subtitle>(subtitle);
-    subtitleRef.current = subtitle;
 
     useEffect(() => {
         subtitleWrapperRef.current!.ondblclick = (event) => {
@@ -153,7 +151,6 @@ function SubtitleContainer({ video, subtitle, mountElement }: SubtitleContainerP
         });
 
         function updateSubtitle() {
-            let subtitle = subtitleRef.current;
             const currentTime = video.getCurrentTime();
             let nowSubTitleIndex;
             let nowSubtitleElementString = '';
@@ -239,26 +236,15 @@ function SubtitleContainer({ video, subtitle, mountElement }: SubtitleContainerP
         });
 
         function playNext() {
-            const time = subtitleRef.current.getNextSubtitleTime();
+            const time = subtitle.getNextSubtitleTime();
             video.seekAndPlay(time);
         }
 
         function playPrev() {
-            const time = subtitleRef.current.getPrevSubtitleTime();
+            const time = subtitle.getPrevSubtitleTime();
             video.seekAndPlay(time);
         }
     }, []);
-
-    function getContextFromVideo(): ContextFromVideo | null {
-        let nowSubtitleNode = subtitleRef.current.getNowSubtitleNode();
-        if (!nowSubtitleNode) {
-            return null;
-        }
-        subtitleWrapperRef.current!.style.display = 'none';
-        let videoContext = video.getContextFromVideo(nowSubtitleNode.begin, nowSubtitleNode.end);
-        subtitleWrapperRef.current!.style.display = 'block';
-        return videoContext;
-    }
 
     return ReactDOM.createPortal(
         <div>
@@ -272,7 +258,6 @@ function SubtitleContainer({ video, subtitle, mountElement }: SubtitleContainerP
                 }}
                 id={SUBTITLE_WRAPPER_ID}
             ></SubtitleWrapper>
-            <Popup getContextFromVideo={getContextFromVideo} video={video}></Popup>
         </div>,
         mountElement
     );
