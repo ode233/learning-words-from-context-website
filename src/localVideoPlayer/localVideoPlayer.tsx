@@ -5,15 +5,14 @@ import 'video.js/dist/video-js.css';
 import { ChangeEvent, useEffect, useRef } from 'react';
 import './localVideoPlayer.css';
 import { css } from '@emotion/react';
-import ReactDOM from 'react-dom';
 import { parseSync } from 'subtitle';
-import { generateSubtitleNodeList } from './subtitle';
-import { Subtitle, SubtitleContainer } from '../subtitle/subtitleContainer';
-import { LocalVideo } from './video';
+import { SubtitleContainer } from './subtitle/subtitleContainer';
+import { LocalVideo } from './video/localVideo';
 import { requestPermission, getDeckNames, createDeck, getModelNames, createModel } from '../api/ankiApi';
 import { ANKI_DECK_NAME, ANKI_MODEL_NAME } from '../constants/ankiConstants';
 import { createRoot } from 'react-dom/client';
-import { Popup } from '../translate/popup';
+import { Popup } from './translate/popup';
+import { Subtitle } from './subtitle/subtitle';
 
 const localVideoPlayerId = 'local-video-player';
 const videoInputId = 'video-input';
@@ -155,8 +154,7 @@ function LocalVideoPlayer() {
         let text = await file.text();
         let nodes = parseSync(text);
         console.log(nodes);
-        let subtitleNodeList = generateSubtitleNodeList(nodes);
-        let subtitle = new Subtitle(subtitleNodeList);
+        let subtitle = new Subtitle(nodes);
         let localVideo = new LocalVideo(videoNode.current!, player.current);
         let mountElement = document.getElementById(localVideoPlayerId);
 

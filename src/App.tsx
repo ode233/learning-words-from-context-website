@@ -1,4 +1,4 @@
-import LocalVideoPlayer from './localVideo/localVideoPlayer';
+import LocalVideoPlayer from './localVideoPlayer/localVideoPlayer';
 
 function App() {
     return (

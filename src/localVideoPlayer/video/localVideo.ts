@@ -1,11 +1,34 @@
-import { ContextFromVideo } from './tanslatePopupDefintion';
+import videojs from 'video.js';
 
-abstract class Video {
+interface ContextFromVideo {
+    videoSentenceVoiceDataUrl: string;
+    imgDataUrl: string;
+}
+
+class LocalVideo {
     public videoElement: HTMLVideoElement;
+    private player: videojs.Player;
     private stream: MediaStream | null = null;
 
-    public constructor(videoElement: HTMLVideoElement) {
+    public constructor(videoElement: HTMLVideoElement, player: videojs.Player) {
         this.videoElement = videoElement;
+        this.player = player;
+    }
+
+    public seek(time: number): void {
+        this.player.currentTime(time);
+    }
+    public play(): void {
+        this.player.play();
+    }
+    public pause(): void {
+        this.player.pause();
+    }
+    public getCurrentTime(): number {
+        return this.player.currentTime();
+    }
+    public setOntimeupdate(f: any): void {
+        this.videoElement.ontimeupdate = f;
     }
 
     // all time unit is second
@@ -102,12 +125,6 @@ abstract class Video {
         }
         return res;
     }
-
-    public abstract seek(time: number): void;
-    public abstract play(): void;
-    public abstract pause(): void;
-    public abstract getCurrentTime(): number;
-    public abstract setOntimeupdate(f: any): void;
 }
 
-export { Video };
+export { LocalVideo };

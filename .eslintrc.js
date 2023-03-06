@@ -81,7 +81,8 @@ module.exports = {
                     'autoplay',
                     'offscreen',
                     'msg',
-                    'no-cors'
+                    'no-cors',
+                    'ctx'
                 ]
             }
         ]

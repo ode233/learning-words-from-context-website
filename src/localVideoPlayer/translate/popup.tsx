@@ -23,7 +23,7 @@ import {
     ListItemIcon,
     ListItemText
 } from '@mui/material';
-import { dataUrlToBlob } from '../api/translateApi';
+import { dataUrlToBlob } from '../../api/translateApi';
 import {
     DICT_POPUP_WIDTH,
     DICT_POPUP_HEIGHT,
@@ -31,11 +31,12 @@ import {
     LEFT_CLICK,
     ANKI_POPUP_HEIGHT,
     ANKI_POPUP_WIDTH
-} from '../constants/translateConstants';
-import { ContextFromVideo, PopupAttrs, PopupProps } from '../definition/tanslatePopupDefintion';
-import { translator } from '../option/option';
-import { addNote } from '../api/ankiApi';
-import { SUBTITLE_WRAPPER_ID } from '../constants/watchVideoConstants';
+} from '../../constants/translateConstants';
+import { addNote } from '../../api/ankiApi';
+import { SUBTITLE_WRAPPER_ID } from '../../constants/watchVideoConstants';
+import { Subtitle } from '../subtitle/subtitle';
+import { LocalVideo } from '../video/localVideo';
+import { translator } from '../../userConfig/userConfig';
 
 const DictPopupWrapper = styled.div``;
 
@@ -47,6 +48,33 @@ const Text = styled.h3`
     font-family: sans-serif;
     margin: 18px 0px;
 `;
+
+class PopupProps {
+    public video!: LocalVideo;
+    public subtitle!: Subtitle;
+}
+
+class PopupAttrs {
+    public dictLoading = true;
+    public dictDisplay = 'none';
+    public dictLeft = 0;
+    public dictTop = 0;
+    public text = '';
+    public textPhonetic = '';
+    public textVoiceUrl = '';
+    public textTranslate = '';
+    public sentence = '';
+    public sentenceVoiceUrl = '';
+    public videoSentenceVoiceDataUrl = '';
+    public sentenceTranslate = '';
+    public remark = '';
+    public pageIconUrl = '';
+    public pageTitle = '';
+    public pageUrl = '';
+    public imgDataUrl = '';
+    public ankiOpen = false;
+    public isLoadingAnki = false;
+}
 
 const Popup = ({ video, subtitle }: PopupProps) => {
     const [popupAttrs, setPopupAttrs] = useState(new PopupAttrs());
@@ -131,7 +159,7 @@ const Popup = ({ video, subtitle }: PopupProps) => {
         });
     }, []);
 
-    function getContextFromVideo(): ContextFromVideo | null {
+    function getContextFromVideo() {
         let nowSubtitleNode = subtitle.getNowSubtitleNode();
         if (!nowSubtitleNode) {
             return null;
@@ -430,3 +458,4 @@ const Popup = ({ video, subtitle }: PopupProps) => {
 };
 
 export { Popup };
+export { PopupProps, PopupAttrs };

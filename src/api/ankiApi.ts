@@ -1,4 +1,3 @@
-import { PopupAttrs, PopupProps } from '../definition/tanslatePopupDefintion';
 import {
     ANKI_CARD_BACK_HTML,
     ANKI_CARD_CSS,
@@ -6,6 +5,7 @@ import {
     ANKI_DECK_NAME,
     ANKI_MODEL_NAME
 } from '../constants/ankiConstants';
+import { PopupAttrs } from '../localVideoPlayer/translate/popup';
 
 const ankiBaseUrl = 'http://127.0.0.1:8765';
 

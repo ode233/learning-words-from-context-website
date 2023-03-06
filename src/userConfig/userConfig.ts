@@ -1,3 +1,5 @@
+import { CaiyunTranslator, Translator, YoudaoFreeTranslator } from '../localVideoPlayer/translate/translator';
+
 class UserConfig {
     public caiyunToken = '';
 }
@@ -23,4 +25,13 @@ function setUserConfig(config: UserConfig) {
     localStorage.setItem('userConfig', JSON.stringify(config));
 }
 
-export { UserConfig, getUserConfig, setUserConfig };
+// init user config
+let translator: Translator<any>;
+let userConfig = getUserConfig();
+if (userConfig.caiyunToken) {
+    translator = new CaiyunTranslator({ token: userConfig.caiyunToken });
+} else {
+    translator = new YoudaoFreeTranslator();
+}
+
+export { translator };
