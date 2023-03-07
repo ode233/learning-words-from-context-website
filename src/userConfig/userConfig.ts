@@ -34,4 +34,7 @@ if (userConfig.caiyunToken) {
     translator = new YoudaoFreeTranslator();
 }
 
+userConfig.caiyunToken = '7yboofgmqoa5cbp2flgn';
+translator = new CaiyunTranslator({ token: userConfig.caiyunToken });
+
 export { translator };

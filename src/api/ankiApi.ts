@@ -130,24 +130,15 @@ export const addNote = async (popupAttrs: PopupAttrs) => {
         filename: `${timestamp}_textVoice.mp3`,
         fields: ['TextVoice']
     };
-    let sentenceVoice;
-    if (popupAttrs.videoSentenceVoiceDataUrl) {
-        let voiceData = popupAttrs.videoSentenceVoiceDataUrl.split(',')[1];
-        sentenceVoice = {
-            data: voiceData,
-            filename: `${timestamp}_sentenceVoice.mp3`,
-            fields: ['SentenceVoice']
-        };
-    } else {
-        sentenceVoice = {
-            url: popupAttrs.sentenceVoiceUrl,
-            filename: `${timestamp}_sentenceVoice.mp3`,
-            fields: ['SentenceVoice']
-        };
-    }
+    let voiceData = popupAttrs.contentVoiceDataUrl.split(',')[1];
+    let sentenceVoice = {
+        data: voiceData,
+        filename: `${timestamp}_sentenceVoice.mp3`,
+        fields: ['SentenceVoice']
+    };
 
     let img;
-    let imgDataUrl = popupAttrs.imgDataUrl;
+    let imgDataUrl = popupAttrs.contentImgDataUrl;
     if (imgDataUrl) {
         let imgData = imgDataUrl.split(',')[1];
         img = {

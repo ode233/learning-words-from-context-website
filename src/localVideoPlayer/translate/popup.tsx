@@ -65,13 +65,13 @@ class PopupAttrs {
     public textTranslate = '';
     public sentence = '';
     public sentenceVoiceUrl = '';
-    public videoSentenceVoiceDataUrl = '';
     public sentenceTranslate = '';
     public remark = '';
     public pageIconUrl = '';
     public pageTitle = '';
     public pageUrl = '';
-    public imgDataUrl = '';
+    public contentVoiceDataUrl = '';
+    public contentImgDataUrl = '';
     public ankiOpen = false;
     public isLoadingAnki = false;
 }
@@ -137,8 +137,8 @@ const Popup = ({ video, subtitle }: PopupProps) => {
             setPopupAttrs(newPopupAttrs);
 
             // fetch value
-            newPopupAttrs.textTranslate = translator.translate(newPopupAttrs.text);
-            newPopupAttrs.sentenceTranslate = translator.translate(newPopupAttrs.sentence);
+            newPopupAttrs.textTranslate = await translator.translate(newPopupAttrs.text);
+            newPopupAttrs.sentenceTranslate = await translator.translate(newPopupAttrs.sentence);
             newPopupAttrs.dictLoading = false;
             setPopupAttrs({ ...newPopupAttrs });
         });
@@ -176,15 +176,15 @@ const Popup = ({ video, subtitle }: PopupProps) => {
         popupAttrs.isLoadingAnki = true;
         popupAttrs.dictDisplay = 'none';
         setPopupAttrs({ ...popupAttrs });
-        let data = getContextFromVideo();
-        if (!data?.imgDataUrl) {
-            alert('getContextFromVideo err');
+        let data = await getContextFromVideo();
+        if (!data?.imgDataUrl || !data?.voiceDataUrl) {
+            alert('Get context from video error');
             popupAttrs.isLoadingAnki = false;
             setPopupAttrs({ ...popupAttrs });
             return;
         }
-        popupAttrs.videoSentenceVoiceDataUrl = data.videoSentenceVoiceDataUrl;
-        popupAttrs.imgDataUrl = data.imgDataUrl;
+        popupAttrs.contentVoiceDataUrl = data.voiceDataUrl;
+        popupAttrs.contentImgDataUrl = data.imgDataUrl;
         popupAttrs.ankiOpen = true;
         setPopupAttrs({ ...popupAttrs });
     };
@@ -366,19 +366,7 @@ const Popup = ({ video, subtitle }: PopupProps) => {
                                     <InputAdornment position="start">
                                         <BsVolumeUpFill
                                             onClick={async () => {
-                                                let url;
-                                                if (popupAttrs.videoSentenceVoiceDataUrl) {
-                                                    let blob = await dataUrlToBlob(
-                                                        popupAttrs.videoSentenceVoiceDataUrl
-                                                    );
-                                                    url = window.URL.createObjectURL(blob);
-                                                } else {
-                                                    url = popupAttrs.sentenceVoiceUrl;
-                                                }
-                                                if (!url) {
-                                                    return;
-                                                }
-                                                playAudio(url);
+                                                playAudio(popupAttrs.contentVoiceDataUrl);
                                             }}
                                         />
                                     </InputAdornment>
@@ -439,7 +427,7 @@ const Popup = ({ video, subtitle }: PopupProps) => {
                             <InputLabel shrink={true}>图片</InputLabel>
                             <ListItem disablePadding>
                                 <img
-                                    src={popupAttrs.imgDataUrl}
+                                    src={popupAttrs.contentImgDataUrl}
                                     css={css`
                                         width: inherit;
                                     `}

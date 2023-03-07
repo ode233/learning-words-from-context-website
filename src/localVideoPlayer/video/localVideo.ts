@@ -1,14 +1,15 @@
+import { rejects } from 'assert';
+import delay from 'delay';
 import videojs from 'video.js';
 
 interface ContextFromVideo {
-    videoSentenceVoiceDataUrl: string;
+    voiceDataUrl: string;
     imgDataUrl: string;
 }
 
 class LocalVideo {
     public videoElement: HTMLVideoElement;
     private player: videojs.Player;
-    private stream: MediaStream | null = null;
 
     public constructor(videoElement: HTMLVideoElement, player: videojs.Player) {
         this.videoElement = videoElement;
@@ -40,42 +41,16 @@ class LocalVideo {
         this.play();
     }
 
-    public getContextFromVideo(begin: number, end: number): ContextFromVideo {
+    public async getContextFromVideo(begin: number, end: number): Promise<ContextFromVideo> {
         let contextFromVideo: ContextFromVideo = {
-            videoSentenceVoiceDataUrl: '',
+            voiceDataUrl: '',
             imgDataUrl: ''
         };
-        this.initStream();
         this.pause();
         contextFromVideo.imgDataUrl = this.captureVideo(begin);
-        contextFromVideo.videoSentenceVoiceDataUrl = this.captureAudio(begin, end);
+        contextFromVideo.voiceDataUrl = await this.captureAudio(begin, end);
         this.pause();
         return contextFromVideo;
-    }
-
-    /**
-     * init stream only audio
-     */
-    private initStream() {
-        if (this.stream && this.stream.getAudioTracks().length > 0) {
-            return;
-        }
-        navigator.mediaDevices
-            .getDisplayMedia({
-                video: true,
-                audio: true
-            })
-            .then((stream) => {
-                if (stream.getAudioTracks().length === 0) {
-                    window.alert('please share system audio');
-                    throw new Error('no audio track');
-                }
-                this.stream = stream;
-            })
-            .catch((e) => {
-                window.alert('please share system audio');
-                throw e;
-            });
     }
 
     // capture video
@@ -89,41 +64,44 @@ class LocalVideo {
         return canvas.toDataURL();
     }
 
-    private captureAudio(begin: number, end: number): string {
-        if (!this.stream) {
-            window.alert('please share system audio');
-            throw new Error('no stream');
-        }
+    private async captureAudio(begin: number, end: number): Promise<string> {
+        let ctx = new AudioContext();
+        // create an source node from the <video>
+        let source = ctx.createMediaElementSource(this.videoElement);
+        // now a MediaStream destination node
+        let stream_dest = ctx.createMediaStreamDestination();
+        // connect the source to the MediaStream
+        source.connect(stream_dest);
+        // grab the MediaStream
+        let stream = stream_dest.stream;
+        // record audio
         let chunks: Array<Blob> = [];
-        const mediaRecorder = new MediaRecorder(this.stream);
+
+        const mediaRecorder = new MediaRecorder(stream);
+        // TODO: data is empty when mediaRecorder stop, can't hear audio on website when recorder start
         mediaRecorder.ondataavailable = (e) => {
+            console.log(e);
             chunks.push(e.data);
+            const blob = new Blob(chunks);
+            // convert blob to data url
+            const audioDataURL = URL.createObjectURL(blob);
+            console.log(audioDataURL);
+            let reader = new window.FileReader();
+            reader.onloadend = () => {
+                console.log(reader.result);
+            };
+            reader.readAsDataURL(blob);
         };
-
-        let mediaRecorderOnStopPromise = new Promise<Blob>((resolve) => {
-            mediaRecorder.addEventListener('stop', () => {
-                const blob = new Blob(chunks);
-                resolve(blob);
-            });
-        });
-
         const timeExtend = 200;
         const duration = (end - begin) * 1000 + timeExtend;
         mediaRecorder.start();
         this.play();
-        setTimeout(() => {
-            mediaRecorder.stop();
-        }, duration);
-
-        let res;
-        mediaRecorderOnStopPromise.then((blob) => {
-            let reader = new window.FileReader();
-            res = reader.readAsDataURL(blob);
-        });
-        if (!res) {
-            throw new Error('readAsDataURL error');
-        }
-        return res;
+        await delay(duration);
+        mediaRecorder.stop();
+        const blob = new Blob(chunks);
+        // convert blob to data url
+        const audioDataURL = URL.createObjectURL(blob);
+        return audioDataURL;
     }
 }
 
