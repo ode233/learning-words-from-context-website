@@ -1,5 +1,3 @@
-import { rejects } from 'assert';
-import delay from 'delay';
 import videojs from 'video.js';
 
 interface ContextFromVideo {
@@ -78,30 +76,25 @@ class LocalVideo {
         let chunks: Array<Blob> = [];
 
         const mediaRecorder = new MediaRecorder(stream);
-        // TODO: data is empty when mediaRecorder stop, can't hear audio on website when recorder start
+        // TODO: can't hear audio on website when recorder start
         mediaRecorder.ondataavailable = (e) => {
-            console.log(e);
             chunks.push(e.data);
-            const blob = new Blob(chunks);
-            // convert blob to data url
-            const audioDataURL = URL.createObjectURL(blob);
-            console.log(audioDataURL);
-            let reader = new window.FileReader();
-            reader.onloadend = () => {
-                console.log(reader.result);
-            };
-            reader.readAsDataURL(blob);
         };
         const timeExtend = 200;
         const duration = (end - begin) * 1000 + timeExtend;
         mediaRecorder.start();
         this.play();
-        await delay(duration);
-        mediaRecorder.stop();
-        const blob = new Blob(chunks);
-        // convert blob to data url
-        const audioDataURL = URL.createObjectURL(blob);
-        return audioDataURL;
+        return new Promise<string>((resolve) => {
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks);
+                // convert blob to data url
+                const audioDataURL = URL.createObjectURL(blob);
+                resolve(audioDataURL);
+            };
+            setTimeout(() => {
+                mediaRecorder.stop();
+            }, duration);
+        });
     }
 }
 
