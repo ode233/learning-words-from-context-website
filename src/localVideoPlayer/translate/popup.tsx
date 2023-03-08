@@ -76,6 +76,7 @@ class PopupAttrs {
     public isLoadingAnki = false;
 }
 
+// TODO: disable extension on this website
 const Popup = ({ video, subtitle }: PopupProps) => {
     const [popupAttrs, setPopupAttrs] = useState(new PopupAttrs());
 
