@@ -8,11 +8,12 @@ import { css } from '@emotion/react';
 import { parseSync } from 'subtitle';
 import { SubtitleContainer } from './subtitle/subtitleContainer';
 import { LocalVideo } from './video/localVideo';
-import { requestPermission, getDeckNames, createDeck, getModelNames, createModel } from '../api/ankiApi';
-import { ANKI_DECK_NAME, ANKI_MODEL_NAME } from '../constants/ankiConstants';
 import { createRoot } from 'react-dom/client';
 import { Popup } from './translate/popup';
 import { Subtitle } from './subtitle/subtitle';
+import { init } from '../userConfig/userConfig';
+
+init();
 
 const localVideoPlayerId = 'local-video-player';
 const videoInputId = 'video-input';
@@ -71,25 +72,6 @@ class F11fullscreenToggle extends VideoJsButton {
         }
     }
 }
-
-// TODO: check before page load
-async function checkAnkiConfig() {
-    console.log('checkAnkiConfig');
-
-    let res = (await requestPermission()).result;
-    console.log('requestPermission', res);
-
-    let deckNames: [string] = (await getDeckNames()).result;
-    if (!deckNames.includes(ANKI_DECK_NAME)) {
-        await createDeck();
-    }
-    let modelNames: [string] = (await getModelNames()).result;
-    if (!modelNames.includes(ANKI_MODEL_NAME)) {
-        await createModel();
-    }
-}
-
-checkAnkiConfig();
 
 function LocalVideoPlayer() {
     const videoNode = useRef<HTMLVideoElement>(null);

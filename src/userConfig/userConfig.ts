@@ -1,4 +1,6 @@
 import { CaiyunTranslator, Translator, YoudaoFreeTranslator } from '../localVideoPlayer/translate/translator';
+import { requestPermission, getDeckNames, createDeck, getModelNames, createModel } from '../api/ankiApi';
+import { ANKI_DECK_NAME, ANKI_MODEL_NAME } from '../constants/ankiConstants';
 
 class UserConfig {
     public caiyunToken = '';
@@ -25,16 +27,43 @@ function setUserConfig(config: UserConfig) {
     localStorage.setItem('userConfig', JSON.stringify(config));
 }
 
-// init user config
-let translator: Translator<any>;
-let userConfig = getUserConfig();
-if (userConfig.caiyunToken) {
-    translator = new CaiyunTranslator({ token: userConfig.caiyunToken });
-} else {
-    translator = new YoudaoFreeTranslator();
+async function checkAnkiConfig() {
+    let res = (await requestPermission()).result;
+    console.log('requestPermission', res);
+    if (!res || res['permission'] !== 'granted') {
+        window.alert('Need anki permission');
+        return;
+    }
+
+    let deckNames: [string] = (await getDeckNames()).result;
+    if (!deckNames.includes(ANKI_DECK_NAME)) {
+        await createDeck();
+    }
+    let modelNames: [string] = (await getModelNames()).result;
+    if (!modelNames.includes(ANKI_MODEL_NAME)) {
+        await createModel();
+    }
 }
 
-userConfig.caiyunToken = '7yboofgmqoa5cbp2flgn';
-translator = new CaiyunTranslator({ token: userConfig.caiyunToken });
+function initUserConfig() {
+    // init user config
+    let userConfig = getUserConfig();
+    if (userConfig.caiyunToken) {
+        translator = new CaiyunTranslator({ token: userConfig.caiyunToken });
+    } else {
+        translator = new YoudaoFreeTranslator();
+    }
 
-export { translator };
+    // TODO: config page
+    userConfig.caiyunToken = '7yboofgmqoa5cbp2flgn';
+    translator = new CaiyunTranslator({ token: userConfig.caiyunToken });
+}
+
+function init() {
+    checkAnkiConfig();
+    initUserConfig();
+}
+
+let translator = new YoudaoFreeTranslator();
+
+export { init, translator };

@@ -23,7 +23,6 @@ import {
     ListItemIcon,
     ListItemText
 } from '@mui/material';
-import { dataUrlToBlob } from '../../api/translateApi';
 import {
     DICT_POPUP_WIDTH,
     DICT_POPUP_HEIGHT,
@@ -76,7 +75,6 @@ class PopupAttrs {
     public isLoadingAnki = false;
 }
 
-// TODO: disable extension on this website
 const Popup = ({ video, subtitle }: PopupProps) => {
     const [popupAttrs, setPopupAttrs] = useState(new PopupAttrs());
 
