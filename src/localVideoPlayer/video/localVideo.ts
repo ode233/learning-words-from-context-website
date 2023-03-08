@@ -59,24 +59,19 @@ class LocalVideo {
         canvas.height = this.videoElement.videoHeight;
         let ctx = canvas.getContext('2d')!;
         ctx.drawImage(this.videoElement, 0, 0, canvas.width, canvas.height);
-        return canvas.toDataURL();
+        return canvas.toDataURL('image/jpeg', 0.5);
     }
 
     private async captureAudio(begin: number, end: number): Promise<string> {
-        let ctx = new AudioContext();
-        // create an source node from the <video>
-        let source = ctx.createMediaElementSource(this.videoElement);
-        // now a MediaStream destination node
-        let stream_dest = ctx.createMediaStreamDestination();
-        // connect the source to the MediaStream
-        source.connect(stream_dest);
-        // grab the MediaStream
-        let stream = stream_dest.stream;
+        let videoElement: any = this.videoElement;
+        let stream: MediaStream = videoElement.captureStream();
+
+        let audioStream = new MediaStream(stream.getAudioTracks());
+
         // record audio
         let chunks: Array<Blob> = [];
 
-        const mediaRecorder = new MediaRecorder(stream);
-        // TODO: can't hear audio on website when recorder start
+        const mediaRecorder = new MediaRecorder(audioStream);
         mediaRecorder.ondataavailable = (e) => {
             chunks.push(e.data);
         };
@@ -86,10 +81,16 @@ class LocalVideo {
         this.play();
         return new Promise<string>((resolve) => {
             mediaRecorder.onstop = () => {
-                const blob = new Blob(chunks);
-                // convert blob to data url
-                const audioDataURL = URL.createObjectURL(blob);
-                resolve(audioDataURL);
+                let reader = new window.FileReader();
+                reader.addEventListener('loadend', () => {
+                    let base64 = reader.result?.toString();
+                    if (!base64) {
+                        base64 = '';
+                    }
+                    resolve(base64);
+                });
+                const blob = new Blob(chunks, { type: 'audio/webm' });
+                reader.readAsDataURL(blob);
             };
             setTimeout(() => {
                 mediaRecorder.stop();
