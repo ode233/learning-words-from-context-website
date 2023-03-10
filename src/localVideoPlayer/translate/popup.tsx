@@ -93,7 +93,7 @@ const Popup = ({ video, subtitle }: PopupProps) => {
                 return;
             }
             let text = getText();
-            if (!text) {
+            if (!isEnWord(text)) {
                 return;
             }
 
@@ -443,6 +443,18 @@ const Popup = ({ video, subtitle }: PopupProps) => {
         </div>
     );
 };
+
+let isEnWordRegex = /^[a-zA-Z]+$/;
+
+function isEnWord(text: string): boolean {
+    if (!text) {
+        return false;
+    }
+    if (isEnWordRegex.test(text)) {
+        return true;
+    }
+    return false;
+}
 
 export { Popup };
 export { PopupProps, PopupAttrs };
