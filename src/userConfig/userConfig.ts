@@ -27,7 +27,7 @@ function setUserConfig(config: UserConfig) {
     localStorage.setItem('userConfig', JSON.stringify(config));
 }
 
-async function checkAnkiConfig() {
+async function initAnkiConfig() {
     let res = (await requestPermission()).result;
     console.log('requestPermission', res);
     if (!res || res['permission'] !== 'granted') {
@@ -60,7 +60,7 @@ function initUserConfig() {
 }
 
 function init() {
-    checkAnkiConfig();
+    initAnkiConfig();
     initUserConfig();
 }
 
