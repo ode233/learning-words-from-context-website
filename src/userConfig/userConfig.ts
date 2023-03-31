@@ -48,15 +48,13 @@ async function initAnkiConfig() {
 function initUserConfig() {
     // init user config
     let userConfig = getUserConfig();
+    // TODO: config page
+    userConfig.caiyunToken = '7yboofgmqoa5cbp2flgn';
     if (userConfig.caiyunToken) {
         translator = new CaiyunTranslator({ token: userConfig.caiyunToken });
     } else {
         translator = new YoudaoFreeTranslator();
     }
-
-    // TODO: config page
-    userConfig.caiyunToken = '7yboofgmqoa5cbp2flgn';
-    translator = new CaiyunTranslator({ token: userConfig.caiyunToken });
 }
 
 function init() {
