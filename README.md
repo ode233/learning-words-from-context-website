@@ -1,10 +1,14 @@
 # learning-words-from-context-website
 
-A website help people learning words from context
+A [website video player](https://ode233.github.io/learning-words-from-context-website/) help people learning words from context.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+It's support subtitle translate, video forward/backward based on subtitle, generate anki card based on context.
+
+<img src="./demo.gif"/>
 
 ## Available Scripts
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 In the project directory, you can run:
 

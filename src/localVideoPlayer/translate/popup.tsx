@@ -130,7 +130,8 @@ const Popup = ({ video, subtitle }: PopupProps) => {
             newPopupAttrs.textVoiceUrl = YOUDAO_VOICE_URL + text;
             newPopupAttrs.sentence = sentence;
             newPopupAttrs.sentenceVoiceUrl = YOUDAO_VOICE_URL + sentence;
-            newPopupAttrs.pageIconUrl = window.location.origin + '/favicon.ico';
+            newPopupAttrs.pageIconUrl =
+                'https://raw.githubusercontent.com/ode233/learning-words-from-context/main/src/assets/icons/icon.png';
             newPopupAttrs.pageTitle = document.title;
             newPopupAttrs.pageUrl = document.URL;
             setPopupAttrs(newPopupAttrs);

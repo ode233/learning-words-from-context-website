@@ -149,16 +149,11 @@ export const addNote = async (popupAttrs: PopupAttrs) => {
     }
 
     let pageIcon;
-    let pageIconUrl = popupAttrs.pageIconUrl;
-    let pageIconName = getPageIconName(pageIconUrl);
+    let pageIconName = 'localVideoPlayer.ico';
     let isExist = (await retrieveMediaFile(pageIconName)).result;
     if (!isExist) {
-        if (pageIconName === 'localVideoPlayer.ico') {
-            pageIconUrl =
-                'https://raw.githubusercontent.com/ode233/learning-words-from-context/main/src/assets/icons/icon.png';
-        }
         pageIcon = {
-            url: pageIconUrl,
+            url: 'https://raw.githubusercontent.com/ode233/learning-words-from-context/main/src/assets/icons/icon.png',
             filename: pageIconName,
             fields: ['PageIcon']
         };
@@ -201,17 +196,3 @@ export const addNote = async (popupAttrs: PopupAttrs) => {
     });
     return response.json();
 };
-
-function getPageIconName(pageIconUrl: string): string {
-    let pageIconName;
-    if (pageIconUrl.includes('chrome-extension://')) {
-        pageIconName = 'localVideoPlayer.ico';
-    } else {
-        pageIconName = pageIconUrl.replaceAll('/favicon.ico', '');
-        pageIconName = pageIconName.replaceAll('https://', '');
-        pageIconName = pageIconName.replaceAll('http://', '');
-        pageIconName = pageIconName.replaceAll('.', '-');
-        pageIconName = pageIconName + '.ico';
-    }
-    return pageIconName;
-}
