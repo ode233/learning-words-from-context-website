@@ -4,7 +4,7 @@ A [website video player](https://ode233.github.io/learning-words-from-context-we
 
 It's support subtitle translate, video forward/backward based on subtitle, generate anki card based on context.
 
-<img src="./demo.gif"/>
+<img src="https://media.giphy.com/media/yiVMcz0Ut0qGulGfEt/giphy.gif"/>
 
 ## Available Scripts
 
