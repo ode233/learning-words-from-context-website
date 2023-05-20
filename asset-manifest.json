@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/ode233/learning-words-by-watching-video/static/css/main.8dd75749.css",
+    "main.js": "/ode233/learning-words-by-watching-video/static/js/main.fada77fd.js",
+    "static/js/496.64ef91bd.chunk.js": "/ode233/learning-words-by-watching-video/static/js/496.64ef91bd.chunk.js",
+    "index.html": "/ode233/learning-words-by-watching-video/index.html",
+    "main.8dd75749.css.map": "/ode233/learning-words-by-watching-video/static/css/main.8dd75749.css.map",
+    "main.fada77fd.js.map": "/ode233/learning-words-by-watching-video/static/js/main.fada77fd.js.map",
+    "496.64ef91bd.chunk.js.map": "/ode233/learning-words-by-watching-video/static/js/496.64ef91bd.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8dd75749.css",
+    "static/js/main.fada77fd.js"
+  ]
+}
