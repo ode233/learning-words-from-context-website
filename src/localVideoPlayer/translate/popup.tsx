@@ -157,6 +157,17 @@ const Popup = ({ video, subtitle }: PopupProps) => {
                 setPopupAttrs({ ...popupAttrsRef.current });
             }
         });
+
+        document.addEventListener('keydown', (event: KeyboardEvent) => {
+            let key = event.key;
+            if (key === 'Enter') {
+                if (popupAttrsRef.current.dictDisplay === 'block') {
+                    onClickOpenAnkiPopup();
+                } else if (popupAttrsRef.current.ankiOpen) {
+                    onClickExportAnki();
+                }
+            }
+        });
     }, []);
 
     function getContextFromVideo() {
@@ -173,40 +184,40 @@ const Popup = ({ video, subtitle }: PopupProps) => {
 
     const onClickOpenAnkiPopup = async () => {
         window.getSelection()?.removeAllRanges();
-        popupAttrs.isLoadingAnki = true;
-        popupAttrs.dictDisplay = 'none';
-        setPopupAttrs({ ...popupAttrs });
+        popupAttrsRef.current.isLoadingAnki = true;
+        popupAttrsRef.current.dictDisplay = 'none';
+        setPopupAttrs({ ...popupAttrsRef.current });
         let data = await getContextFromVideo();
         if (!data?.imgDataUrl || !data?.voiceDataUrl) {
             alert('Get context from video error');
-            popupAttrs.isLoadingAnki = false;
-            setPopupAttrs({ ...popupAttrs });
+            popupAttrsRef.current.isLoadingAnki = false;
+            setPopupAttrs({ ...popupAttrsRef.current });
             return;
         }
-        popupAttrs.contentVoiceDataUrl = data.voiceDataUrl;
-        popupAttrs.contentImgDataUrl = data.imgDataUrl;
-        popupAttrs.ankiOpen = true;
-        setPopupAttrs({ ...popupAttrs });
+        popupAttrsRef.current.contentVoiceDataUrl = data.voiceDataUrl;
+        popupAttrsRef.current.contentImgDataUrl = data.imgDataUrl;
+        popupAttrsRef.current.ankiOpen = true;
+        setPopupAttrs({ ...popupAttrsRef.current });
     };
 
     const onClickCloseAnki = () => {
-        popupAttrs.isLoadingAnki = false;
-        popupAttrs.ankiOpen = false;
-        setPopupAttrs({ ...popupAttrs });
+        popupAttrsRef.current.isLoadingAnki = false;
+        popupAttrsRef.current.ankiOpen = false;
+        setPopupAttrs({ ...popupAttrsRef.current });
         setTimeout(() => {
             video.play();
         }, 100);
     };
 
     const onClickExportAnki = () => {
-        addNote(popupAttrs).then((data) => {
+        addNote(popupAttrsRef.current).then((data) => {
             if (data.error) {
                 alert(`ankiExport err, ${data.error}`);
                 return;
             }
-            popupAttrs.isLoadingAnki = false;
-            popupAttrs.ankiOpen = false;
-            setPopupAttrs({ ...popupAttrs });
+            popupAttrsRef.current.isLoadingAnki = false;
+            popupAttrsRef.current.ankiOpen = false;
+            setPopupAttrs({ ...popupAttrsRef.current });
             setTimeout(() => {
                 video.play();
             }, 100);
