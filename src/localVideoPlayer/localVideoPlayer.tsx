@@ -115,6 +115,10 @@ function LocalVideoPlayer() {
         });
 
         player.current.controls(true);
+
+        player.current.bigPlayButton.handleClick = () => {
+            document.getElementById(videoInputId)?.click();
+        };
     }, []);
 
     function videoInputOnChange(event: ChangeEvent<HTMLInputElement>) {
