@@ -445,8 +445,8 @@ const Popup = ({ video, subtitle }: PopupProps) => {
     );
 };
 
-let isEnWordRegex = /^[a-zA-Z]+$/;
-let isEnWordGroupRegex = /^[a-zA-Z ]+$/;
+let isEnWordRegex = /^[a-zA-Z'-]+$/;
+let isEnWordGroupRegex = /^[a-zA-Z '-]+$/;
 
 function isEnWord(text: string): boolean {
     if (!text) {
