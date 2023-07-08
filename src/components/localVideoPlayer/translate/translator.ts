@@ -1,4 +1,4 @@
-import { getCaiyunTranslate, getYoudaoFreeTranslate } from '../../api/translateApi';
+import { getCaiyunTranslate, getYoudaoFreeTranslate } from '../../../api/translateApi';
 
 abstract class Translator<T> {
     public translatorConfig: T;

@@ -1,50 +1,19 @@
-import { NodeList } from 'subtitle';
-import {
-    NOT_MATCH_SUBTITLE_INDEX,
-    BEFORE_SUBTITLE_BEGIN_INDEX,
-    AFTER_SUBTITLE_END_INDEX
-} from '../../constants/subtitleConstants';
+import { NodeList, parseSync } from 'subtitle';
 
-function generateSubtitleNodeList(nodes: NodeList): Array<SubtitleNode> {
-    let subtitleNodeList: Array<SubtitleNode> = [];
-    for (let node of nodes) {
-        if (node.type !== 'cue') {
-            continue;
-        }
-        const begin = node.data.start / 10 ** 3;
-        const end = node.data.end / 10 ** 3;
-        let subtitleHTML = getSubtitleHTML(node.data.text);
-        let subtitleElement = createSubtitleElement(subtitleHTML, subtitleNodeList.length);
-        subtitleNodeList.push(new SubtitleNode(begin, end, subtitleElement));
-    }
-    return subtitleNodeList;
-}
-
-function getSubtitleHTML(text: string) {
-    let subtitleHTML = text;
-    subtitleHTML = subtitleHTML.replaceAll('<font face="Serif" size="18">', '');
-    subtitleHTML = subtitleHTML.replaceAll('</font>', '');
-    return subtitleHTML;
-}
-
-function createSubtitleElement(subtitleHTML: string, index: number): HTMLParagraphElement {
-    let newSubtitleElement = document.createElement('p');
-    newSubtitleElement.style.whiteSpace = 'pre-line';
-    newSubtitleElement.style.fontFamily = 'serif';
-    newSubtitleElement.innerHTML = subtitleHTML;
-    return newSubtitleElement;
-}
+const BEFORE_SUBTITLE_BEGIN_INDEX = -1;
+const AFTER_SUBTITLE_END_INDEX = -2;
+const NOT_MATCH_SUBTITLE_INDEX = -3;
 
 class SubtitleNode {
     // second
     public begin: number;
     public end: number;
-    public element: HTMLParagraphElement;
+    public text: string;
 
-    public constructor(begin: number, end: number, element: HTMLParagraphElement) {
+    public constructor(begin: number, end: number, text: string) {
         this.begin = begin;
         this.end = end;
-        this.element = element;
+        this.text = text;
     }
 }
 
@@ -59,17 +28,21 @@ class SubtitleIndexMatchResult {
     }
 }
 
-class Subtitle {
+export class SubtitleController {
     public subtitleNodeList: Array<SubtitleNode> = [];
 
     public nowSubTitleIndex = NOT_MATCH_SUBTITLE_INDEX;
     public prevSubTitleIndex = NOT_MATCH_SUBTITLE_INDEX;
 
+    public nowSubtitleText = '';
+
     public subtitleBeginTime = 0;
     public subtitleEndTime = 0;
 
-    public constructor(nodes: NodeList) {
+    public constructor(text: string) {
+        let nodes = parseSync(text);
         let subtitleNodeList = generateSubtitleNodeList(nodes);
+        console.log('subtitleNodeList', subtitleNodeList);
         this.subtitleNodeList = subtitleNodeList;
         this.subtitleBeginTime = subtitleNodeList[0].begin;
         this.subtitleEndTime = subtitleNodeList[subtitleNodeList.length - 1].end;
@@ -126,6 +99,33 @@ class Subtitle {
         }
     }
 
+    public updateSubtitle(currentTime: number) {
+        if (!currentTime) {
+            return;
+        }
+        let nowSubTitleIndex;
+        if (currentTime < this.subtitleBeginTime) {
+            nowSubTitleIndex = BEFORE_SUBTITLE_BEGIN_INDEX;
+        } else if (currentTime > this.subtitleEndTime) {
+            nowSubTitleIndex = AFTER_SUBTITLE_END_INDEX;
+        } else {
+            let subtitleIndexMatchResult = this.getSubtitleIndexByTime(currentTime);
+            if (subtitleIndexMatchResult.isMatch) {
+                nowSubTitleIndex = subtitleIndexMatchResult.index;
+            } else {
+                nowSubTitleIndex = NOT_MATCH_SUBTITLE_INDEX;
+                this.prevSubTitleIndex = subtitleIndexMatchResult.index;
+            }
+        }
+        this.nowSubTitleIndex = nowSubTitleIndex;
+        let nowSubtitleNode = this.getNowSubtitleNode();
+        if (nowSubtitleNode) {
+            this.nowSubtitleText = nowSubtitleNode.text;
+        } else {
+            this.nowSubtitleText = '';
+        }
+    }
+
     private binarySearch(i: number, j: number, target: number): SubtitleIndexMatchResult {
         if (i > j) {
             return new SubtitleIndexMatchResult(false, j);
@@ -142,4 +142,26 @@ class Subtitle {
     }
 }
 
-export { Subtitle };
+function generateSubtitleNodeList(nodes: NodeList): Array<SubtitleNode> {
+    let subtitleNodeList: Array<SubtitleNode> = [];
+    for (let node of nodes) {
+        if (node.type !== 'cue') {
+            continue;
+        }
+        const begin = node.data.start / 10 ** 3;
+        const end = node.data.end / 10 ** 3;
+        let subtitleHtml = createSubtitleHtml(node.data.text);
+        subtitleNodeList.push(new SubtitleNode(begin, end, subtitleHtml));
+    }
+    return subtitleNodeList;
+}
+
+function createSubtitleHtml(text: string): string {
+    let processedText = text.replaceAll('<font face="Serif" size="18">', '');
+    processedText = text.replaceAll('</font>', '');
+    let subtitleElement = document.createElement('p');
+    subtitleElement.style.whiteSpace = 'pre-line';
+    subtitleElement.style.fontFamily = 'serif';
+    subtitleElement.innerHTML = processedText;
+    return subtitleElement.outerHTML;
+}

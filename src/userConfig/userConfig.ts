@@ -1,7 +1,13 @@
-import { CaiyunTranslator, Translator, YoudaoFreeTranslator } from '../localVideoPlayer/translate/translator';
-import { requestPermission, getDeckNames, createDeck, getModelNames, createModel } from '../api/ankiApi';
-import { ANKI_DECK_NAME, ANKI_MODEL_NAME } from '../constants/ankiConstants';
-
+import { CaiyunTranslator, YoudaoFreeTranslator } from '../components/localVideoPlayer/translate/translator';
+import {
+    requestPermission,
+    getDeckNames,
+    createDeck,
+    getModelNames,
+    createModel,
+    ANKI_DECK_NAME,
+    ANKI_MODEL_NAME
+} from '../api/ankiApi';
 class UserConfig {
     public caiyunToken = '';
 }

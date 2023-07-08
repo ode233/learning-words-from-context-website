@@ -82,7 +82,9 @@ module.exports = {
                     'offscreen',
                     'msg',
                     'no-cors',
-                    'ctx'
+                    'ctx',
+                    'timeupdate',
+                    '7yboofgmqoa5cbp2flgn'
                 ]
             }
         ]

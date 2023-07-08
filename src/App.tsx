@@ -1,10 +1,12 @@
-import LocalVideoPlayer from './localVideoPlayer/localVideoPlayer';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
+import LocalVideoPlayer from './components/localVideoPlayer/LocalVideoPlayer';
 
 function App() {
     return (
-        <div>
+        <Provider store={store}>
             <LocalVideoPlayer></LocalVideoPlayer>
-        </div>
+        </Provider>
     );
 }
 

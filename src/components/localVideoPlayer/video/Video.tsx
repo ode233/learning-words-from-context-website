@@ -2,20 +2,13 @@
 
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
-import { ChangeEvent, useEffect, useRef } from 'react';
-import './localVideoPlayer.css';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import './video.css';
 import { css } from '@emotion/react';
-import { parseSync } from 'subtitle';
-import { SubtitleContainer } from './subtitle/subtitleContainer';
-import { LocalVideo } from './video/localVideo';
-import { createRoot } from 'react-dom/client';
-import { Popup } from './translate/popup';
-import { Subtitle } from './subtitle/subtitle';
-import { init } from '../userConfig/userConfig';
+import { VideoController } from './VideoController';
+import { useAppDispatch } from '../../../redux/hook';
+import { updateSubtitleText } from '../subtitle/subtitleSlice';
 
-init();
-
-const localVideoPlayerId = 'local-video-player';
 const videoInputId = 'video-input';
 const subtitleInputId = 'subtitle-input';
 
@@ -73,13 +66,14 @@ class F11fullscreenToggle extends VideoJsButton {
     }
 }
 
-function LocalVideoPlayer() {
-    const videoNode = useRef<HTMLVideoElement>(null);
-    const subtitleRenderContainer = useRef<HTMLDivElement>(null);
-    const popupRenderContainer = useRef<HTMLDivElement>(null);
-    const player = useRef<videojs.Player>();
+export let videoController: VideoController;
 
-    console.log('LocalVideoPlayer');
+export default function Video() {
+    const videoNodeRef = useRef<HTMLVideoElement>(null);
+
+    const dispatch = useAppDispatch();
+
+    console.log('Video');
 
     useEffect(() => {
         videojs.registerComponent('selectVideo', SelectVideo);
@@ -110,44 +104,35 @@ function LocalVideoPlayer() {
                 doubleClick: false
             }
         };
-        player.current = videojs(videoNode.current!, {
+        let player = videojs(videoNodeRef.current!, {
             ...initialOptions
         });
 
-        player.current.controls(true);
+        player.controls(true);
 
-        player.current.bigPlayButton.handleClick = () => {
+        player.bigPlayButton.handleClick = () => {
             document.getElementById(videoInputId)?.click();
         };
+
+        videoController = new VideoController(player);
     }, []);
 
     function videoInputOnChange(event: ChangeEvent<HTMLInputElement>) {
-        if (!player.current) {
-            return;
-        }
         let file = event.target.files![0];
         document.title = file.name;
 
         let fileURL = URL.createObjectURL(file);
-        player.current.src({ src: fileURL, type: file.type });
+        videoController.player.src({ src: fileURL, type: file.type });
     }
 
     async function subtitleInputOnChange(event: ChangeEvent<HTMLInputElement>) {
-        if (!player.current) {
-            return;
-        }
         let file = event.target.files![0];
         let text = await file.text();
-        let nodes = parseSync(text);
-        console.log(nodes);
-        let subtitle = new Subtitle(nodes);
-        let localVideo = new LocalVideo(videoNode.current!, player.current);
-        let mountElement = document.getElementById(localVideoPlayerId);
-
-        createRoot(subtitleRenderContainer.current!).render(
-            <SubtitleContainer video={localVideo} subtitle={subtitle} mountElement={mountElement!}></SubtitleContainer>
-        );
-        createRoot(popupRenderContainer.current!).render(<Popup video={localVideo} subtitle={subtitle}></Popup>);
+        videoController.initSubtitleController(text);
+        videoController.setOnSubtitleUpdate((newSubtitleText) => {
+            dispatch(updateSubtitleText(newSubtitleText));
+        });
+        dispatch(updateSubtitleText('subtitle is loaded'));
     }
 
     return (
@@ -164,7 +149,7 @@ function LocalVideoPlayer() {
                 top: 0;
             `}
         >
-            <video ref={videoNode} className="video-js vjs-big-play-centered" id={localVideoPlayerId} />
+            <video ref={videoNodeRef} className="video-js vjs-big-play-centered" />
             <input
                 type="file"
                 accept=".mp4"
@@ -183,10 +168,6 @@ function LocalVideoPlayer() {
                 `}
                 onChange={subtitleInputOnChange}
             />
-            <div ref={subtitleRenderContainer}></div>
-            <div ref={popupRenderContainer}></div>
         </div>
     );
 }
-
-export default LocalVideoPlayer;

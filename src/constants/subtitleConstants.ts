@@ -1,3 +1,0 @@
-export const BEFORE_SUBTITLE_BEGIN_INDEX = -1;
-export const AFTER_SUBTITLE_END_INDEX = -2;
-export const NOT_MATCH_SUBTITLE_INDEX = -3;
