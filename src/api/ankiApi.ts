@@ -248,7 +248,6 @@ export const addNote = async (ankiExportAttr: AnkiExportAttr) => {
     let pageIcon;
     let pageIconName = 'localVideoPlayer.ico';
     let isExist = (await retrieveMediaFile(pageIconName)).result;
-    console.log('isExist', isExist);
     if (!isExist) {
         pageIcon = {
             url: 'https://raw.githubusercontent.com/ode233/learning-words-from-context/main/src/assets/icons/icon.png',
@@ -256,8 +255,6 @@ export const addNote = async (ankiExportAttr: AnkiExportAttr) => {
             fields: ['PageIcon']
         };
     }
-
-    console.log(pageIcon);
 
     const response = await fetch(ankiBaseUrl, {
         method: 'POST',

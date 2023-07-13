@@ -152,7 +152,6 @@ export class VideoController {
     private setupShortcutKeys() {
         // Control playback progress by keyboard
         document.addEventListener('keydown', (event) => {
-            console.log(event);
             let keyEvent = event as KeyboardEvent;
             let key = keyEvent.key;
             if (key === 'a' || key === 'A' || key === 'ArrowLeft') {
@@ -160,7 +159,6 @@ export class VideoController {
             } else if (key === 'd' || key === 'D' || key === 'ArrowRight') {
                 this.playNext();
             } else if (key === ' ') {
-                console.log(key);
                 this.switchPlayStatus();
             }
         });
@@ -223,7 +221,6 @@ export class VideoController {
             document.body.style.cursor = 'default';
         });
         this.player.on('userinactive', () => {
-            console.log('userinactive');
             document.body.style.cursor = 'none';
         });
     }

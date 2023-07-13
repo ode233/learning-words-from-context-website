@@ -74,8 +74,6 @@ export default function Video() {
 
     const dispatch = useAppDispatch();
 
-    console.log('Video');
-
     useEffect(() => {
         videojs.registerComponent('selectVideo', SelectVideo);
         videojs.registerComponent('selectSubtitle', SelectSubtitle);
