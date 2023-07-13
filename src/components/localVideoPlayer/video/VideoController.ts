@@ -16,6 +16,7 @@ export class VideoController {
         this.player = player;
         this.videoElement = player.tech().el() as HTMLVideoElement;
         this.setupShortcutKeys();
+        this.setupAutoHideCursor();
     }
 
     public async initSubtitleController(text: string) {
@@ -25,15 +26,27 @@ export class VideoController {
     public seek(time: number): void {
         this.player.currentTime(time);
     }
+
     public play(): void {
         this.player.play();
     }
+
     public pause(): void {
         this.player.pause();
     }
+
+    public switchPlayStatus(): void {
+        if (this.player.paused()) {
+            this.play();
+        } else {
+            this.pause();
+        }
+    }
+
     public getCurrentTime(): number {
         return this.player.currentTime();
     }
+
     public setOntimeupdate(f: any): void {
         this.player.on('timeupdate', f);
     }
@@ -139,12 +152,16 @@ export class VideoController {
     private setupShortcutKeys() {
         // Control playback progress by keyboard
         document.addEventListener('keydown', (event) => {
+            console.log(event);
             let keyEvent = event as KeyboardEvent;
             let key = keyEvent.key;
             if (key === 'a' || key === 'A' || key === 'ArrowLeft') {
                 this.playPrev();
             } else if (key === 'd' || key === 'D' || key === 'ArrowRight') {
                 this.playNext();
+            } else if (key === ' ') {
+                console.log(key);
+                this.switchPlayStatus();
             }
         });
 
@@ -199,5 +216,15 @@ export class VideoController {
             mousedown = false;
             dragged = false;
         };
+    }
+
+    private setupAutoHideCursor() {
+        this.player.on('useractive', () => {
+            document.body.style.cursor = 'default';
+        });
+        this.player.on('userinactive', () => {
+            console.log('userinactive');
+            document.body.style.cursor = 'none';
+        });
     }
 }

@@ -84,7 +84,9 @@ module.exports = {
                     'no-cors',
                     'ctx',
                     'timeupdate',
-                    '7yboofgmqoa5cbp2flgn'
+                    '7yboofgmqoa5cbp2flgn',
+                    'useractive',
+                    'userinactive'
                 ]
             }
         ]

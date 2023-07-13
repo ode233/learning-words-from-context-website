@@ -8,6 +8,7 @@ import { css } from '@emotion/react';
 import { VideoController } from './VideoController';
 import { useAppDispatch } from '../../../redux/hook';
 import { updateSubtitleText } from '../subtitle/subtitleSlice';
+import { updateIsPlay } from './videoSlice';
 
 const videoInputId = 'video-input';
 const subtitleInputId = 'subtitle-input';
@@ -115,6 +116,14 @@ export default function Video() {
         };
 
         videoController = new VideoController(player);
+
+        player.on('play', () => {
+            dispatch(updateIsPlay(true));
+        });
+
+        player.on('pause', () => {
+            dispatch(updateIsPlay(false));
+        });
     }, []);
 
     function videoInputOnChange(event: ChangeEvent<HTMLInputElement>) {

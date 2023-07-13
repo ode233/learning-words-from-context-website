@@ -26,6 +26,7 @@ import { BsVolumeUpFill } from 'react-icons/bs';
 import styled from '@emotion/styled';
 import { SubtitleSelectionData } from '../subtitle/Subtitle';
 import { videoController } from '../video/Video';
+import { selectIsPlay } from '../video/videoSlice';
 
 const LEFT_CLICK = 0;
 const DICT_POPUP_WIDTH = 420;
@@ -68,6 +69,8 @@ function DictPopup() {
     const [isLoading, setIsLoading] = useState(false);
 
     const subtitleSelectionData = useAppSelector(selectSubtitleSelectionData);
+    const isPlay = useAppSelector(selectIsPlay);
+
     const dispatch = useAppDispatch();
 
     const dictAttrRef = useRef<DictAttr>({
@@ -94,6 +97,12 @@ function DictPopup() {
             setIsLoading(false);
         });
     }, [subtitleSelectionData]);
+
+    useEffect(() => {
+        if (isPlay && dictPopupVisible) {
+            setDictPopupVisible(false);
+        }
+    }, [isPlay]);
 
     useEffect(() => {
         document.addEventListener('mousedown', (event: MouseEvent) => {
