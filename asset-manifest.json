@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/learning-words-from-context-website/static/css/main.8dd75749.css",
-    "main.js": "/learning-words-from-context-website/static/js/main.03633596.js",
+    "main.js": "/learning-words-from-context-website/static/js/main.3d8a5d75.js",
     "static/js/496.64ef91bd.chunk.js": "/learning-words-from-context-website/static/js/496.64ef91bd.chunk.js",
     "index.html": "/learning-words-from-context-website/index.html",
     "main.8dd75749.css.map": "/learning-words-from-context-website/static/css/main.8dd75749.css.map",
-    "main.03633596.js.map": "/learning-words-from-context-website/static/js/main.03633596.js.map",
+    "main.3d8a5d75.js.map": "/learning-words-from-context-website/static/js/main.3d8a5d75.js.map",
     "496.64ef91bd.chunk.js.map": "/learning-words-from-context-website/static/js/496.64ef91bd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.8dd75749.css",
-    "static/js/main.03633596.js"
+    "static/js/main.3d8a5d75.js"
   ]
 }
