@@ -261,7 +261,6 @@ function AnkiExportPopup() {
         if (!dictAttr) {
             return;
         }
-        console.log('dictAttr change');
         setAnkiExportAttr(createAnkiExportAttr(dictAttr));
         setAnkiExportPopupVisible(true);
     }, [dictAttr]);
@@ -276,7 +275,6 @@ function AnkiExportPopup() {
             if (key === 'Enter') {
                 setAnkiExportPopupVisible((v) => {
                     if (v) {
-                        console.log('ankiExportAttr', ankiExportAttr);
                         exportToAnki();
                     }
                     return v;
