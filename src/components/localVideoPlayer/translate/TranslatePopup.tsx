@@ -253,15 +253,22 @@ function AnkiExportPopup() {
         pageUrl: ''
     });
 
+    const ankiExportAttrRef = useRef(ankiExportAttr);
+
     const dictAttr = useAppSelector(selectDictAttr);
 
     useEffect(() => {
         if (!dictAttr) {
             return;
         }
+        console.log('dictAttr change');
         setAnkiExportAttr(createAnkiExportAttr(dictAttr));
         setAnkiExportPopupVisible(true);
     }, [dictAttr]);
+
+    useEffect(() => {
+        ankiExportAttrRef.current = ankiExportAttr;
+    }, [ankiExportAttr]);
 
     useEffect(() => {
         document.addEventListener('keydown', (event: KeyboardEvent) => {
@@ -269,6 +276,7 @@ function AnkiExportPopup() {
             if (key === 'Enter') {
                 setAnkiExportPopupVisible((v) => {
                     if (v) {
+                        console.log('ankiExportAttr', ankiExportAttr);
                         exportToAnki();
                     }
                     return v;
@@ -283,7 +291,11 @@ function AnkiExportPopup() {
     }
 
     function exportToAnki() {
-        addNote(ankiExportAttr!).then((data) => {
+        if (!ankiExportAttrRef.current.text) {
+            alert('exportToAnki err, empty text');
+            return;
+        }
+        addNote(ankiExportAttrRef.current!).then((data) => {
             if (data.error) {
                 alert(`ankiExport err, ${data.error}`);
                 return;
@@ -309,6 +321,9 @@ function AnkiExportPopup() {
                     flex-direction: column;
                     gap: 16px;
                 `}
+                onKeyDown={(e) => {
+                    e.stopPropagation();
+                }}
             >
                 <TextField
                     fullWidth
