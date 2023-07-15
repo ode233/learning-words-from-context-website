@@ -89,7 +89,8 @@ module.exports = {
                     'userinactive',
                     'wordlist',
                     'rect',
-                    'rects'
+                    'rects',
+                    'gi'
                 ]
             }
         ]

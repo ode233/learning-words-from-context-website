@@ -74,7 +74,7 @@ export function Subtitle() {
                 }
                 let word = getNthDifficultWord(wordListRef.current, queryWordRankRef.current);
                 selectWord(word, subtitleTextNodeRef.current!);
-            } else if ((key === 'd' || key === 'D' || key === 'ArrowRight') && keyboardQueryMode) {
+            } else if (key === 'd' || key === 'D' || key === 'ArrowRight') {
                 if (!keyboardQueryMode) {
                     return;
                 }
