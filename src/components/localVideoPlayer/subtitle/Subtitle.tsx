@@ -29,8 +29,6 @@ const SubtitleWrapper = styled.div`
     color: white;
 `;
 
-const clientX = window.innerWidth / 2;
-const clientY = window.innerHeight - 100;
 export let keyboardQueryMode = false;
 
 export function Subtitle() {
@@ -39,6 +37,7 @@ export function Subtitle() {
     const sentenceRef = useRef(subtitleText);
     const wordListRef = useRef(['']);
     const queryWordRankRef = useRef(0);
+    const subtitleTextNodeRef = useRef<HTMLParagraphElement>(null);
 
     useEffect(() => {
         document.addEventListener('keydown', (event: KeyboardEvent) => {
@@ -46,19 +45,26 @@ export function Subtitle() {
             let key = event.key;
             // auto translate
             if (key === 'Enter' && sentenceRef.current && !dictPopupVisible) {
-                queryWordRankRef.current = 0;
-                keyboardQueryMode = true;
-                let word = getNthDifficultWord(wordListRef.current, queryWordRankRef.current);
-                let SubtitleSelectionData: SubtitleSelectionData = {
-                    text: word,
-                    sentence: sentenceRef.current,
-                    clickX: clientX,
-                    clickY: clientY
-                };
-                // prevent open anki export popup
-                setTimeout(() => {
-                    dispatch(openDictPopup(SubtitleSelectionData));
-                }, 100);
+                if (!keyboardQueryMode) {
+                    keyboardQueryMode = true;
+                    queryWordRankRef.current = 0;
+                    videoController.pause();
+                    let word = getNthDifficultWord(wordListRef.current, queryWordRankRef.current);
+                    selectWord(word, subtitleTextNodeRef.current!);
+                } else {
+                    keyboardQueryMode = false;
+                    let rect = window.getSelection()?.getRangeAt(0).getClientRects()[0];
+                    let SubtitleSelectionData: SubtitleSelectionData = {
+                        text: getText(),
+                        sentence: getSentence(),
+                        clickX: rect!.left,
+                        clickY: rect!.top
+                    };
+                    // prevent open anki export popup
+                    setTimeout(() => {
+                        dispatch(openDictPopup(SubtitleSelectionData));
+                    }, 100);
+                }
             } else if (key === 'a' || key === 'A' || key === 'ArrowLeft') {
                 if (!keyboardQueryMode) {
                     return;
@@ -67,13 +73,7 @@ export function Subtitle() {
                     queryWordRankRef.current--;
                 }
                 let word = getNthDifficultWord(wordListRef.current, queryWordRankRef.current);
-                let SubtitleSelectionData: SubtitleSelectionData = {
-                    text: word,
-                    sentence: sentenceRef.current,
-                    clickX: clientX,
-                    clickY: clientY
-                };
-                dispatch(openDictPopup(SubtitleSelectionData));
+                selectWord(word, subtitleTextNodeRef.current!);
             } else if ((key === 'd' || key === 'D' || key === 'ArrowRight') && keyboardQueryMode) {
                 if (!keyboardQueryMode) {
                     return;
@@ -82,13 +82,7 @@ export function Subtitle() {
                     queryWordRankRef.current++;
                 }
                 let word = getNthDifficultWord(wordListRef.current, queryWordRankRef.current);
-                let SubtitleSelectionData: SubtitleSelectionData = {
-                    text: word,
-                    sentence: sentenceRef.current,
-                    clickX: clientX,
-                    clickY: clientY
-                };
-                dispatch(openDictPopup(SubtitleSelectionData));
+                selectWord(word, subtitleTextNodeRef.current!);
             }
         });
         document.addEventListener('mouseup', () => {
@@ -100,6 +94,7 @@ export function Subtitle() {
         sentenceRef.current = getSentenceBySubtitleText(subtitleText);
         wordListRef.current = getWordList(sentenceRef.current);
         queryWordRankRef.current = 0;
+        keyboardQueryMode = false;
     }, [subtitleText]);
 
     function mouseUp(event: React.MouseEvent) {
@@ -131,13 +126,13 @@ export function Subtitle() {
             onMouseUp={mouseUp}
         >
             <p
+                ref={subtitleTextNodeRef}
                 css={css`
                     white-space: pre-line;
                     font-family: serif;
                 `}
-            >
-                {subtitleText}
-            </p>
+                dangerouslySetInnerHTML={{ __html: subtitleText }}
+            ></p>
         </SubtitleWrapper>
     );
 }
@@ -163,4 +158,34 @@ function getSentenceBySubtitleText(subtitleText: string): string {
 function getWordList(sentence: string): string[] {
     let wordList = sentence.match(/[a-zA-Z'-]+/g) as string[];
     return wordList;
+}
+
+function selectWord(word: string, subtitleTextNode: Node) {
+    const regExp = new RegExp(`\\b${word}\\b`, 'gi'); // 使用单词边界匹配单词
+    selectWordRecursion(regExp, subtitleTextNode);
+}
+
+function selectWordRecursion(regExp: RegExp, subtitleTextNode: Node) {
+    if (!subtitleTextNode.firstChild) {
+        const text = subtitleTextNode.textContent!;
+        console.log(subtitleTextNode, text);
+        const matches = text?.match(regExp);
+        if (!matches) {
+            return;
+        }
+
+        const range = new Range();
+        const index = text.indexOf(matches[0]); // 获取第一个匹配单词的起始位置
+
+        range.setStart(subtitleTextNode, index);
+        range.setEnd(subtitleTextNode, index + matches[0].length);
+
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+    }
+    const childNodeList = subtitleTextNode.childNodes;
+    for (const childNode of childNodeList) {
+        selectWordRecursion(regExp, childNode);
+    }
 }
