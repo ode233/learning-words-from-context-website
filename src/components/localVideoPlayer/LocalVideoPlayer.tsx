@@ -1,9 +1,9 @@
-import { init } from '../../userConfig/userConfig';
+import { initConfig } from '../../config/config';
 import Video from './video/Video';
 import { Subtitle } from './subtitle/Subtitle';
 import { TranslatePopup } from './translate/TranslatePopup';
 
-init();
+initConfig();
 
 export default function LocalVideoPlayer() {
     return (

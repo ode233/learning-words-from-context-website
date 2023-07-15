@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
-import { translator } from '../../../userConfig/userConfig';
+import { translator } from '../../../config/config';
 import { openAnkiExportPopup, selectDictAttr, selectSubtitleSelectionData } from './translatePopupSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { addNote } from '../../../api/ankiApi';
@@ -35,6 +35,9 @@ const ANKI_POPUP_WIDTH = 600;
 const ANKI_POPUP_HEIGHT = 800;
 const YOUDAO_VOICE_URL = 'https://dict.youdao.com/dictvoice?type=0&audio=';
 
+const DICT_POPUP_ID = 'dictPopup';
+const ANKI_EXPORT_POPUP_ID = 'ankiExportPopup';
+
 export function TranslatePopup() {
     return (
         <div>
@@ -62,10 +65,12 @@ export interface DictAttr {
     contentImgDataUrl: string;
 }
 
+export let dictPopupVisible = false;
+
 function DictPopup() {
     const dictLeftRef = useRef<number>(0);
     const dictTopRef = useRef<number>(0);
-    const [dictPopupVisible, setDictPopupVisible] = useState(false);
+    const [visible, setVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const subtitleSelectionData = useAppSelector(selectSubtitleSelectionData);
@@ -88,9 +93,10 @@ function DictPopup() {
         if (!subtitleSelectionData) {
             return;
         }
+        videoController.pause();
         dictLeftRef.current = computeDictLeft(subtitleSelectionData.clickX);
         dictTopRef.current = computeDictTop(subtitleSelectionData.clickY);
-        setDictPopupVisible(true);
+        setVisible(true);
         setIsLoading(true);
         createDictAttr(subtitleSelectionData).then((dictAttr) => {
             dictAttrRef.current = dictAttr;
@@ -99,14 +105,19 @@ function DictPopup() {
     }, [subtitleSelectionData]);
 
     useEffect(() => {
-        if (isPlay && dictPopupVisible) {
-            setDictPopupVisible(false);
+        if (isPlay && visible) {
+            document.getSelection()?.empty();
+            setVisible(false);
         }
     }, [isPlay]);
 
     useEffect(() => {
+        dictPopupVisible = visible;
+    }, [visible]);
+
+    useEffect(() => {
         document.addEventListener('mousedown', (event: MouseEvent) => {
-            setDictPopupVisible((v) => {
+            setVisible((v) => {
                 if (
                     v &&
                     event.button === LEFT_CLICK &&
@@ -125,7 +136,7 @@ function DictPopup() {
         document.addEventListener('keydown', (event: KeyboardEvent) => {
             let key = event.key;
             if (key === 'Enter') {
-                setDictPopupVisible((v) => {
+                setVisible((v) => {
                     if (v) {
                         onClickOpenAnkiPopup();
                     }
@@ -136,7 +147,7 @@ function DictPopup() {
     }, []);
 
     const onClickOpenAnkiPopup = async () => {
-        setDictPopupVisible(false);
+        setVisible(false);
         let contextFromVideo = await videoController.getContextFromVideo();
         if (!contextFromVideo.voiceDataUrl) {
             alert('Get context from video error');
@@ -150,6 +161,7 @@ function DictPopup() {
 
     return (
         <div
+            id={DICT_POPUP_ID}
             css={css`
                 box-sizing: border-box;
                 overflow: auto;
@@ -163,7 +175,7 @@ function DictPopup() {
                 z-index: 10001;
                 left: ${dictLeftRef.current + 'px'};
                 top: ${dictTopRef.current + 'px'};
-                visibility: ${dictPopupVisible ? 'visible' : 'hidden'};
+                visibility: ${visible ? 'visible' : 'hidden'};
             `}
         >
             {isLoading && (
@@ -236,8 +248,10 @@ export interface AnkiExportAttr {
     pageUrl: string;
 }
 
+export let ankiExportPopupVisible = false;
+
 function AnkiExportPopup() {
-    const [ankiExportPopupVisible, setAnkiExportPopupVisible] = useState(false);
+    const [visible, setVisible] = useState(false);
     const [ankiExportAttr, setAnkiExportAttr] = useState<AnkiExportAttr>({
         text: '',
         textVoiceUrl: '',
@@ -262,7 +276,7 @@ function AnkiExportPopup() {
             return;
         }
         setAnkiExportAttr(createAnkiExportAttr(dictAttr));
-        setAnkiExportPopupVisible(true);
+        setVisible(true);
     }, [dictAttr]);
 
     useEffect(() => {
@@ -270,10 +284,14 @@ function AnkiExportPopup() {
     }, [ankiExportAttr]);
 
     useEffect(() => {
+        ankiExportPopupVisible = visible;
+    }, [visible]);
+
+    useEffect(() => {
         document.addEventListener('keydown', (event: KeyboardEvent) => {
             let key = event.key;
             if (key === 'Enter') {
-                setAnkiExportPopupVisible((v) => {
+                setVisible((v) => {
                     if (v) {
                         exportToAnki();
                     }
@@ -284,7 +302,7 @@ function AnkiExportPopup() {
     }, []);
 
     function closeAnkiExportPopup() {
-        setAnkiExportPopupVisible(false);
+        setVisible(false);
         videoController.play();
     }
 
@@ -304,7 +322,8 @@ function AnkiExportPopup() {
 
     return (
         <Dialog
-            open={ankiExportPopupVisible}
+            id={ANKI_EXPORT_POPUP_ID}
+            open={visible}
             maxWidth={false}
             css={css`
                 bottom: 200px;

@@ -1,6 +1,7 @@
 import { getText } from 'get-selection-more';
 import { SubtitleController } from './SubtitleController';
 import videojs from 'video.js';
+import { keyboardQueryMode } from '../subtitle/Subtitle';
 
 export interface ContextFromVideo {
     voiceDataUrl: string;
@@ -155,8 +156,14 @@ export class VideoController {
             let keyEvent = event as KeyboardEvent;
             let key = keyEvent.key;
             if (key === 'a' || key === 'A' || key === 'ArrowLeft') {
+                if (keyboardQueryMode) {
+                    return;
+                }
                 this.playPrev();
             } else if (key === 'd' || key === 'D' || key === 'ArrowRight') {
+                if (keyboardQueryMode) {
+                    return;
+                }
                 this.playNext();
             } else if (key === ' ') {
                 this.switchPlayStatus();

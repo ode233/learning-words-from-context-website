@@ -63,11 +63,11 @@ function initUserConfig() {
     }
 }
 
-function init() {
+function initConfig() {
     initAnkiConfig();
     initUserConfig();
 }
 
 let translator = new YoudaoFreeTranslator();
 
-export { init, translator };
+export { initConfig, translator };

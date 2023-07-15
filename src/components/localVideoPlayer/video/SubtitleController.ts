@@ -150,18 +150,15 @@ function generateSubtitleNodeList(nodes: NodeList): Array<SubtitleNode> {
         }
         const begin = node.data.start / 10 ** 3;
         const end = node.data.end / 10 ** 3;
-        let subtitleHtml = createSubtitleHtml(node.data.text);
-        subtitleNodeList.push(new SubtitleNode(begin, end, subtitleHtml));
+        const test = processText(node.data.text);
+        subtitleNodeList.push(new SubtitleNode(begin, end, test));
     }
     return subtitleNodeList;
 }
 
-function createSubtitleHtml(text: string): string {
+function processText(text: string): string {
     let processedText = text.replaceAll('<font face="Serif" size="18">', '');
     processedText = text.replaceAll('</font>', '');
-    let subtitleElement = document.createElement('p');
-    subtitleElement.style.whiteSpace = 'pre-line';
-    subtitleElement.style.fontFamily = 'serif';
-    subtitleElement.innerHTML = processedText;
-    return subtitleElement.outerHTML;
+    processedText = text.replaceAll('{an8}', '');
+    return processedText;
 }

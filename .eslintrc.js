@@ -86,7 +86,8 @@ module.exports = {
                     'timeupdate',
                     '7yboofgmqoa5cbp2flgn',
                     'useractive',
-                    'userinactive'
+                    'userinactive',
+                    'wordlist'
                 ]
             }
         ]
