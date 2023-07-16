@@ -9,7 +9,7 @@ import { getSentence, getText } from 'get-selection-more';
 import { openDictPopup } from '../translate/translatePopupSlice';
 import { videoController } from '../video/Video';
 import { getNthDifficultWord } from './computeWordDifficulty';
-import { dictPopupVisible } from '../translate/TranslatePopup';
+import { ankiExportPopupVisible, dictPopupVisible } from '../translate/TranslatePopup';
 export interface SubtitleSelectionData {
     text: string;
     sentence: string;
@@ -44,7 +44,7 @@ export function Subtitle() {
             event.stopPropagation();
             let key = event.key;
             // auto translate
-            if (key === 'Enter' && sentenceRef.current && !dictPopupVisible) {
+            if (key === 'Enter' && sentenceRef.current && !dictPopupVisible && !ankiExportPopupVisible) {
                 if (!keyboardQueryMode) {
                     keyboardQueryMode = true;
                     queryWordRankRef.current = 0;

@@ -105,7 +105,7 @@ function DictPopup() {
     }, [subtitleSelectionData]);
 
     useEffect(() => {
-        if (isPlay && visible) {
+        if (isPlay) {
             document.getSelection()?.empty();
             setVisible(false);
         }
