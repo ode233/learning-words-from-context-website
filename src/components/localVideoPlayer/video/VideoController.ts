@@ -234,12 +234,9 @@ export class VideoController {
     }
 
     private setupHideControlBar() {
-        console.log('setupHideControlBar');
         document.addEventListener('fullscreenchange', () => {
             const isFullscreen = document.fullscreenElement ? true : false;
             const controlBar = this.player.getChild('ControlBar') as videojs.ControlBar;
-            console.log('isFullscreen', isFullscreen);
-
             if (isFullscreen) {
                 // 全屏时隐藏控制条
                 controlBar.hide();
