@@ -90,7 +90,8 @@ module.exports = {
                     'wordlist',
                     'rect',
                     'rects',
-                    'gi'
+                    'gi',
+                    'fullscreenchange'
                 ]
             }
         ]

@@ -159,6 +159,6 @@ function generateSubtitleNodeList(nodes: NodeList): Array<SubtitleNode> {
 function processText(text: string): string {
     let processedText = text.replaceAll('<font face="Serif" size="18">', '');
     processedText = text.replaceAll('</font>', '');
-    processedText = text.replaceAll('{an8}', '');
+    processedText = text.replaceAll('{\\an8}', '');
     return processedText;
 }

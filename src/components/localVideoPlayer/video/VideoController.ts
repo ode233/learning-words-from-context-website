@@ -18,6 +18,7 @@ export class VideoController {
         this.videoElement = player.tech().el() as HTMLVideoElement;
         this.setupShortcutKeys();
         this.setupAutoHideCursor();
+        this.setupHideControlBar();
     }
 
     public async initSubtitleController(text: string) {
@@ -229,6 +230,23 @@ export class VideoController {
         });
         this.player.on('userinactive', () => {
             document.body.style.cursor = 'none';
+        });
+    }
+
+    private setupHideControlBar() {
+        console.log('setupHideControlBar');
+        document.addEventListener('fullscreenchange', () => {
+            const isFullscreen = document.fullscreenElement ? true : false;
+            const controlBar = this.player.getChild('ControlBar') as videojs.ControlBar;
+            console.log('isFullscreen', isFullscreen);
+
+            if (isFullscreen) {
+                // 全屏时隐藏控制条
+                controlBar.hide();
+            } else {
+                // 退出全屏时显示控制条
+                controlBar.show();
+            }
         });
     }
 }
