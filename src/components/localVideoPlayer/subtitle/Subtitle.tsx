@@ -158,12 +158,10 @@ function getSentenceBySubtitleText(subtitleText: string): string {
 
 function getWordList(sentence: string): string[] {
     let wordList = sentence.match(wordListRegex) as string[];
-    console.log(sentence, wordList);
     return wordList;
 }
 
 function selectWord(word: string, subtitleTextNode: Node) {
-    console.log('selectWord', word);
     const regExp = new RegExp(`\\b${word}\\b`, 'gi');
     selectWordRecursion(regExp, subtitleTextNode);
 }
