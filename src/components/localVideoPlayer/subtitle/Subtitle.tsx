@@ -137,7 +137,8 @@ export function Subtitle() {
     );
 }
 
-let isEnWordGroupRegex = /^[a-zA-Z '-]+$/;
+const isEnWordGroupRegex = /^\b[a-zA-Z '-]+\b$/;
+const wordListRegex = /\b[a-zA-Z'-]+\b/g;
 
 function isEnWordGroup(sentence: string): boolean {
     if (!sentence) {
@@ -156,26 +157,27 @@ function getSentenceBySubtitleText(subtitleText: string): string {
 }
 
 function getWordList(sentence: string): string[] {
-    let wordList = sentence.match(/[a-zA-Z'-]+/g) as string[];
+    let wordList = sentence.match(wordListRegex) as string[];
+    console.log(sentence, wordList);
     return wordList;
 }
 
 function selectWord(word: string, subtitleTextNode: Node) {
-    const regExp = new RegExp(`\\b${word}\\b`, 'gi'); // 使用单词边界匹配单词
+    console.log('selectWord', word);
+    const regExp = new RegExp(`\\b${word}\\b`, 'gi');
     selectWordRecursion(regExp, subtitleTextNode);
 }
 
 function selectWordRecursion(regExp: RegExp, subtitleTextNode: Node) {
     if (!subtitleTextNode.firstChild) {
         const text = subtitleTextNode.textContent!;
-        console.log(subtitleTextNode, text);
         const matches = text?.match(regExp);
         if (!matches) {
             return;
         }
 
         const range = new Range();
-        const index = text.indexOf(matches[0]); // 获取第一个匹配单词的起始位置
+        const index = text.indexOf(matches[0]);
 
         range.setStart(subtitleTextNode, index);
         range.setEnd(subtitleTextNode, index + matches[0].length);
