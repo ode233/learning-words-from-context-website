@@ -44,6 +44,7 @@ module.exports = {
                     ...getWords('react-icons/bs'),
                     ...getWords('axios'),
                     ...getWords('typescript'),
+                    ...getWords('@ffmpeg/ffmpeg'),
                     ...getGlobalWords(),
                     'href',
                     'netflix',
@@ -91,7 +92,9 @@ module.exports = {
                     'rect',
                     'rects',
                     'gi',
-                    'fullscreenchange'
+                    'fullscreenchange',
+                    'ffmpeg',
+                    'loadedmetadata'
                 ]
             }
         ]

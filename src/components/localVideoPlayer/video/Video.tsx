@@ -127,9 +127,7 @@ export default function Video() {
     function videoInputOnChange(event: ChangeEvent<HTMLInputElement>) {
         let file = event.target.files![0];
         document.title = file.name;
-
-        let fileURL = URL.createObjectURL(file);
-        videoController.player.src({ src: fileURL, type: file.type });
+        videoController.updateSrcFile(file);
     }
 
     async function subtitleInputOnChange(event: ChangeEvent<HTMLInputElement>) {

@@ -2,6 +2,16 @@ import { getText } from 'get-selection-more';
 import { SubtitleController } from './SubtitleController';
 import videojs from 'video.js';
 import { keyboardQueryMode } from '../subtitle/Subtitle';
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+
+const ffmpeg = createFFmpeg({
+    corePath: `${window.location.href}/ffmpeg/ffmpeg-core.js`
+});
+
+(async () => {
+    await ffmpeg.load();
+    await ffmpeg.run('-version');
+})();
 
 export interface ContextFromVideo {
     voiceDataUrl: string;
@@ -101,6 +111,15 @@ export class VideoController {
         contextFromVideo.imgDataUrl = this.captureVideo(begin);
         contextFromVideo.voiceDataUrl = await this.captureAudio(begin, end);
         return contextFromVideo;
+    }
+
+    public async updateSrcFile(file: File) {
+        let fileURL = URL.createObjectURL(file);
+        this.player.src({ src: fileURL, type: file.type });
+        console.log('ffmpeg read file start', new Date(), file);
+        ffmpeg.FS('writeFile', file.name, await fetchFile(file));
+        console.log('fmpeg read file end', new Date());
+        ffmpeg.run('-i', file.name);
     }
 
     // capture video

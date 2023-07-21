@@ -8,6 +8,9 @@ import {
     ANKI_DECK_NAME,
     ANKI_MODEL_NAME
 } from '../api/ankiApi';
+
+let translator = new YoudaoFreeTranslator();
+
 class UserConfig {
     public caiyunToken = '';
 }
@@ -67,7 +70,5 @@ function initConfig() {
     initAnkiConfig();
     initUserConfig();
 }
-
-let translator = new YoudaoFreeTranslator();
 
 export { initConfig, translator };
