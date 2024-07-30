@@ -290,13 +290,22 @@ function AnkiExportPopup() {
     useEffect(() => {
         document.addEventListener('keydown', (event: KeyboardEvent) => {
             let key = event.key;
-            if (key === 'Enter') {
-                setVisible((v) => {
-                    if (v) {
-                        exportToAnki();
-                    }
-                    return v;
-                });
+            console.log('key:', key);
+            switch (key) {
+                case 'Enter':
+                    setVisible((v) => {
+                        if (v) {
+                            exportToAnki();
+                        }
+                        return v;
+                    });
+                    break;
+                case 'a':
+                case 'd':
+                    closeAnkiExportPopup();
+                    break;
+                default:
+                    break;
             }
         });
     }, []);
