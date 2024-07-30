@@ -290,7 +290,6 @@ function AnkiExportPopup() {
     useEffect(() => {
         document.addEventListener('keydown', (event: KeyboardEvent) => {
             let key = event.key;
-            console.log('key:', key);
             switch (key) {
                 case 'Enter':
                     setVisible((v) => {
@@ -300,11 +299,8 @@ function AnkiExportPopup() {
                         return v;
                     });
                     break;
-                case 'a':
-                case 'd':
-                    closeAnkiExportPopup();
-                    break;
                 default:
+                    closeAnkiExportPopup();
                     break;
             }
         });
