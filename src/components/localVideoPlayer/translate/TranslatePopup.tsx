@@ -297,8 +297,7 @@ function AnkiExportPopup() {
                             exportToAnki();
                             break;
                         default:
-                            closeAnkiExportPopup();
-                            break;
+                            return false;
                     }
                 }
                 return v;
